@@ -1,11 +1,14 @@
-import React from 'react';
 import './App.css';
+import ToDoPage from './Pages/TodoPage';
 
 function App() {
   return (
-    <h1 className="text-3xl px-5 py-5 m-10 bg-slate-300  font-bold underline text-red-600">
-      Simple React Typescript Tailwind Sample
-    </h1>
+    <div>
+      <h1 className="px-5 py-5 m-10 text-3xl font-bold text-red-600 underline bg-slate-300">
+        Simple React Typescript Tailwind Sample
+      </h1>
+      <ToDoPage />
+    </div>
   );
 }
 
