@@ -1,5 +1,3 @@
-import ToDoCard from '../Components/TodoCard';
-
 const HomePage = () => {
     return (
         <div className='mx-8'>

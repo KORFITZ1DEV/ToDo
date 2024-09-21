@@ -1,20 +1,14 @@
 // src/Components/Navbar.tsx
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../Context/useAuth';
 import { useNavigate } from 'react-router-dom';
 
 const Navbar: React.FC = () => {
-    const { isLoggedIn, logout } = useAuth(); // Get authentication methods from the context
+    const { isLoggedIn, logout, user } = useAuth(); // Get authentication methods from the context
+    const userNameAcro = user?.userName.substring(0, 2).toUpperCase();
     const navigate = useNavigate();
 
-    const handleAuthToggle = () => {
-        if (isLoggedIn()) {
-            logout(); // Call the logout function
-        } else {
-            navigate('/login'); // Navigate to login page
-        }
-    };
     return (
         <div className="p-6 navbar bg-gradient-to-b from-black to-red-950">
             <div className="navbar-start">
@@ -36,7 +30,7 @@ const Navbar: React.FC = () => {
                     <ul
                         tabIndex={0}
                         className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
-                        <li><a>Your todos</a></li>
+                        <li><a onClick={() => navigate('/todo')}>Your todos</a></li>
                         <li><a>Calendar</a></li>
                         <li><a>About</a></li>
                     </ul>
@@ -52,11 +46,15 @@ const Navbar: React.FC = () => {
                         {isLoggedIn() ? "Logout" : "Login"}
                     </button>
                 </label>
-                <div className="avatar placeholder">
-                    <div className="w-12 rounded-full bg-neutral text-neutral-content">
-                        <span className="text-xl">CM</span>
+                <div>{user ? (
+                    <div className="avatar placeholder">
+                        <div className="w-12 rounded-full bg-neutral text-neutral-content">
+                            <span className="text-xl">{user ? (
+                                <p>{userNameAcro}</p> // Display the user's username
+                            ) : ""}</span>
+                        </div>
                     </div>
-                </div>
+                ) : ""}</div>
             </div>
         </div>
     );

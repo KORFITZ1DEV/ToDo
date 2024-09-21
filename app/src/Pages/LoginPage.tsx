@@ -1,9 +1,7 @@
-import React from 'react';
 import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup"
 import { useAuth } from '../Context/useAuth';
 import { useForm } from 'react-hook-form';
-import { handleError } from '../Helpers/ErrorHandler';
 
 type Props = {};
 
@@ -38,14 +36,14 @@ const LoginPage = (props: Props) => {
                         >
                             <div>
                                 <label
-                                    htmlFor="username"
+                                    htmlFor="userName"
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                 >
                                     Username
                                 </label>
                                 <input
                                     type="text"
-                                    id="username"
+                                    id="userName"
                                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                     placeholder="Username"
                                     {...register("userName")}

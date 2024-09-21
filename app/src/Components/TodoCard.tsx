@@ -1,63 +1,66 @@
-import React, { useEffect, useState } from 'react';
-import { ToDoDto } from '../Models/Todo'; // Adjust the path as needed
+import { useState } from 'react';
+import { ToDo, UpdateTodo } from '../Models/Todo'; // Adjust the path as needed
+import { useApp } from '../Context/AppContext'; // Import the useApp hook from context
 
 const ToDoCard = () => {
-    const [todos, setTodos] = useState<ToDoDto[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const { toDos, deleteToDo, updateToDo } = useApp(); // Use AppContext methods
+    const [loading, setLoading] = useState(false); // Loading state if needed
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                console.log('Fetching data...');
-                const response = await fetch('http://localhost:5257/api/todo/all');
-                console.log('Response Status:', response.status);  // Log response status
-                if (!response.ok) {
-                    throw new Error('Failed to fetch ToDo items');
-                }
-                const data: ToDoDto[] = await response.json();
-                console.log('Fetched Data:', data);  // Log fetched data
-                setTodos(data);
-            } catch (err: unknown) {
-                if (err instanceof Error) {
-                    console.error('Fetch Error:', err.message);  // Log fetch error
-                    setError(err.message);
-                } else {
-                    console.error('Unknown Error:', err);  // Log unknown error
-                    setError('An unknown error occurred');
-                }
-            } finally {
-                setLoading(false);
-            }
+    const handleDelete = async (id: number) => {
+        setLoading(true);
+        deleteToDo(id); // Call the delete function from context
+        setLoading(false);
+    };
+
+    const handleUpdate = async (id: number) => {
+        const updatedTodo: UpdateTodo = {
+            whatToDo: "Updated Task", // You can replace this with a form input or other dynamic values
+            reminders: "Updated Reminder",
+            timeTodo: 45,
+            priority: "Should",
+            status: "Pending"
         };
-
-        fetchData();
-    }, []);
+        setLoading(true);
+        updateToDo(id, updatedTodo); // Call the update function from context
+        setLoading(false);
+    };
 
     if (loading) {
         return <div className="text-center text-gray-600">Loading...</div>;
     }
 
-    if (error) {
-        return <div className="text-center text-red-500">{error}</div>;
-    }
-
     return (
         <div className="grid grid-cols-1 gap-4 p-4 md:grid-cols-2 lg:grid-cols-3">
-            {todos.map((todo) => (
-                <div key={todo.whatToDo} className="p-6 bg-white rounded-lg shadow-md">
-                    <h2 className="mb-2 text-lg font-bold">{todo.whatToDo}</h2>
-                    <p className="mb-2 text-gray-700">Reminders: {todo.reminders}</p>
-                    <p className="mb-2 text-gray-500">
+            {toDos?.map((todo) => (
+                <div key={todo.id} className="p-6 bg-white shadow-md rounded-2xl">
+                    <h2 className="mb-2 text-lg font-bold text-gray-900">{todo.whatToDo}</h2>
+                    <p className="mb-2 text-gray-900">Reminders: {todo.reminders}</p>
+                    <p className="mb-2 text-gray-900">
                         Date: {new Date(todo.toDoDate).toLocaleDateString()}
                     </p>
-                    <p className="mb-2 text-gray-500">Time to do: {todo.timeTodo} min</p>
+                    <p className="mb-2 text-gray-900">Time to do: {todo.timeTodo} min</p>
                     <p className={`mb-2 ${getPriorityStyle(todo.priority)}`}>
                         Priority: {todo.priority}
                     </p>
                     <p className={`font-semibold ${getStatusStyle(todo.status)}`}>
                         Status: {todo.status}
                     </p>
+
+                    {/* Add buttons for updating and deleting */}
+                    <div className="flex justify-between mt-4">
+                        <button
+                            onClick={() => handleUpdate(todo.id)}
+                            className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
+                        >
+                            Update
+                        </button>
+                        <button
+                            onClick={() => handleDelete(todo.id)}
+                            className="px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600"
+                        >
+                            Delete
+                        </button>
+                    </div>
                 </div>
             ))}
         </div>
@@ -68,7 +71,7 @@ const ToDoCard = () => {
 const getPriorityStyle = (priority: string) => {
     switch (priority) {
         case 'NotSet':
-            return ' text-gray-800'
+            return 'text-gray-800';
         case 'Must':
             return 'text-red-500';
         case 'Should':
